@@ -8,13 +8,26 @@ const port = 3000;
 
 app.use(cors());
 
-// Read the products.json file
 const productsFilePath = path.join(__dirname, 'products.json');
-const products = JSON.parse(fs.readFileSync(productsFilePath, 'utf-8'));
 
 // Define the GET /products endpoint
 app.get('/products', (req, res) => {
-  res.json(products);
+  // Read products.json file dynamically on each request
+  fs.readFile(productsFilePath, 'utf-8', (err, data) => {
+    if (err) {
+      console.error('Error reading products.json:', err);
+      res.status(500).json({ error: 'Failed to read products' });
+      return;
+    }
+
+    try {
+      const products = JSON.parse(data);
+      res.json(products);
+    } catch (error) {
+      console.error('Error parsing products.json:', error);
+      res.status(500).json({ error: 'Failed to parse products data' });
+    }
+  });
 });
 
 // Start the server

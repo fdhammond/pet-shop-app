@@ -8,6 +8,7 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import Layout from './components/Layout.tsx'
+import EditProduct from './components/EditProduct.tsx'
 
 const router = createBrowserRouter([
   {
@@ -21,6 +22,10 @@ const router = createBrowserRouter([
       {
         path: "/prices-with-differences-one-week",
         element: <PricesWithDifferencesOneWeek />,
+      },
+      {
+        path: "/edit-product/:productId",
+        element: <EditProduct />
       }
     ]
   },]);

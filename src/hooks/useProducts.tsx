@@ -20,9 +20,30 @@ export default function useProducts() {
     }
   };
 
+  const fetchProductById = async (productId: string) => {
+    try {
+      console.log('Fetching product with ID:', productId);
+
+      // Find the product in the products array
+      const parsedProductId = parseInt(productId);
+      const product: Product | undefined = products.find(p => p.id === parsedProductId);
+
+      console.log('Found product:', product);
+
+      if (product) {
+        return product;
+      } else {
+        throw new Error(`Product with ID ${productId} not found`);
+      }
+    } catch (err) {
+      setError((err as Error).message);
+      throw err; // Re-throw the error to handle in the component
+    }
+  };
+
   useEffect(() => {
     fetchProductsData();
   }, []);
 
-  return { products, loading, error, fetchProductsData };
+  return { products, loading, error, fetchProductsData, fetchProductById  };
 }

@@ -1,13 +1,14 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
-import PriceHistoryRenderer from './PriceHistoryRenderer'; // Import the custom cell renderer
+import PriceHistoryRenderer from './PriceHistoryRenderer';
 import CalculateOneWeekPrice from './CalculateOneWeekPrice';
+import EditButton from './EditButton';
 import useProducts from '../hooks/useProducts';
 
 const Table: React.FC = () => {
-  const { products, loading, error, fetchProductsData } = useProducts();
+  const { products, loading, error } = useProducts();
 
   const columnDefs = [
     { headerName: 'Nombre', field: 'nombre', flex: 1 },
@@ -16,48 +17,43 @@ const Table: React.FC = () => {
       headerName: 'Ultimo Precio',
       field: 'price_history',
       flex: 2,
-      cellRenderer: PriceHistoryRenderer, // Use custom cell renderer
+      cellRenderer: PriceHistoryRenderer,
     },
     {
       headerName: 'Diferencia de Precio 1 Semana',
       field: 'price_history',
       flex: 2,
-      cellRenderer: CalculateOneWeekPrice, // Use custom cell renderer
+      cellRenderer: CalculateOneWeekPrice,
+    },
+    {
+      headerName: 'Edit',
+      field: 'id',
+      flex: 1,
+      cellRenderer: (params) => <EditButton id={params.data.id} />, // Ensure EditButton is rendered correctly
     },
   ];
-
-  // Polling mechanism: Fetch products every 10 minutes
-  useEffect(() => {
-    const intervalInMilliseconds: number = 10 * 60 * 1000;
-    const interval = setInterval(() => {
-      fetchProductsData();
-    }, intervalInMilliseconds);
-
-    return () => clearInterval(interval); // Cleanup on unmount
-  }, [fetchProductsData]);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
   // Function to dynamically set row height based on content
   const getRowHeight = () => {
-    // Example logic: Adjust height based on content in price_history column
-    const numberOfLines = 2; // Adjust this logic as per your requirement
-    return 25 + 20 * numberOfLines; // Calculate the height based on your content
+    const numberOfLines = 2;
+    return 25 + 20 * numberOfLines;
   };
 
   return (
     <>
-      <h1>Products</h1>
       <div className="ag-theme-alpine" style={{ height: 600, width: '100%' }}>
         <AgGridReact
           rowData={products}
           columnDefs={columnDefs}
           frameworkComponents={{
+            editButton: EditButton,
             priceHistoryRenderer: PriceHistoryRenderer,
             calculateOneWeekPrice: CalculateOneWeekPrice,
-          }} // Register the custom cell renderers
-          getRowHeight={getRowHeight} // Set the row height dynamically
+          }}
+          getRowHeight={getRowHeight}
         />
       </div>
     </>

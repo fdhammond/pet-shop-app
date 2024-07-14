@@ -57,6 +57,7 @@ export default function PricesWithDifferencesOneWeek() {
         { headerName: 'Precio 1 semana atras', field: 'priceOneWeek', flex: 1 }
     ];
 
+
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error: {error}</p>;
 

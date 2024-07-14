@@ -1,10 +1,10 @@
 // Define the types for product and price history
-interface PriceHistory {
+export interface PriceHistory {
   price: number;
   date: string;
 }
 
-interface Product {
+export interface Product {
   id: number;
   nombre: string;
   precio: number;
